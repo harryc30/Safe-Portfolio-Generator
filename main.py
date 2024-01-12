@@ -81,3 +81,32 @@ for i in tickerlist:
   ##Code for industry if avaliable
   tempdf['Currency'] = [temp.fast_info['currency']]
   stock_currency = pd.concat([stock_currency, tempdf],ignore_index=True)
+
+pctchangelist = pd.DataFrame()
+stockprice = pd.DataFrame()
+
+# Define the date range
+start_date = '2023-01-01'
+end_date = '2023-10-01'
+
+# Loop through each ticker
+for ticker_symbol in tickerlist:
+    # Retrieve the historical data for the ticker
+    ticker = yf.Ticker(ticker_symbol)
+
+    #Make a list with the stock values
+    stockprice[ticker_symbol] = ticker.history(start=start_date, end=end_date).Close
+
+    # Extract and calculate the percentage change of closing prices
+    pct_change = ticker.history(start=start_date, end=end_date).Close.pct_change()
+
+    # Add the percentage change data to the DataFrame
+    pctchangelist[ticker_symbol] = pct_change
+
+# Drop the first row (index 0) since it contains NaN values due to percentage change calculation
+pctchangelist = pctchangelist.dropna()
+pctchangelist2 = pctchangelist
+
+# Localize timezone to only display date
+pctchangelist.index = pctchangelist.index.tz_localize(None)
+stockprice.index = stockprice.index.tz_localize(None)
