@@ -71,3 +71,13 @@ def validtickers(df):
 
 tickerlist = validtickers(pd.read_csv('Tickers.csv'))
 print(tickerlist)
+
+stock_currency = pd.DataFrame({'Ticker':[],
+                         'Currency':[]})
+for i in tickerlist:
+  tempdf = pd.DataFrame(columns=['Ticker','Currency'])
+  temp = yf.Ticker(i)
+  tempdf['Ticker'] = [i]
+  ##Code for industry if avaliable
+  tempdf['Currency'] = [temp.fast_info['currency']]
+  stock_currency = pd.concat([stock_currency, tempdf],ignore_index=True)
